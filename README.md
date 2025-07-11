@@ -74,7 +74,7 @@ fcj-checkin/
 ### 1. 🛠 Local Setup
 
 ```bash
-git clone https://github.com/your-username/fcj-face-checkin.git
+git clone [https://github.com/your-username/fcj-face-checkin.git](https://github.com/DucTranThien/Project-FCJ-Face-Recognition-Attendance-System_FCJ-Trainee.git)
 cd fcj-face-checkin/backend
 python3 -m venv venv
 source venv/bin/activate
