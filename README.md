@@ -14,7 +14,7 @@
 [https://d3v2ldedbs76u2.cloudfront.net](https://d3v2ldedbs76u2.cloudfront.net)
 
 🔐 Backend (API Gateway + Lambda):  
-`https://<your-api-id>.execute-api.ap-southeast-1.amazonaws.com/default/`
+`https://go18cmoqsa.execute-api.ap-southeast-1.amazonaws.com/default`
 
 > ⚠️ Note: Make sure the backend routes like `/register`, `/login`, `/checkin`, `/dashboard` are properly deployed via API Gateway.
 
@@ -50,78 +50,109 @@
 
 fcj-checkin/
 │
-├── static_frontend/ # S3-hosted frontend files
-│ ├── index.html
-│ ├── login.html, register.html, dashboard.html ...
-│ └── static/css, images, js
+├── static_frontend/             # S3-hosted static files
+│   ├── index.html, login.html, dashboard.html ...
+│   └── static/
+│       ├── css/
+│       ├── images/
+│       └── js/
+│           └── camera.js, main.js, notifications.js
 │
-├── backend/ # Flask app with Zappa deploy
-│ ├── app.py
-│ ├── services/
-│ │ ├── rekognition_service.py
-│ │ ├── dynamodb_service.py
-│ │ └── email_service.py
-│ ├── templates/
-│ └── requirements.txt
+├── templates/                   # Flask server-rendered templates
+│   ├── base.html, register.html, checkin.html ...
 │
-├── zappa_settings.json # Zappa deployment settings
-└── README.md
+├── services/                    # Modular backend services
+│   ├── dynamodb_service.py
+│   ├── rekognition_service.py
+│   ├── s3_service.py
+│   ├── email_service.py
+│   └── settings_service.py
+│
+├── app.py                       # Flask entry point
+├── requirements.txt            # Python dependencies
+├── zappa_settings.json         # Zappa deploy settings
+└── .env / .env.example         # Environment variables
 
 ---
 
-## 🔧 Setup & Deployment
+🚀 Deployment
+✅ Already deployed at:
 
-### 1. 🛠 Local Setup
+Frontend (CloudFront): https://d3v2ldedbs76u2.cloudfront.net
 
-```bash
-git clone https://github.com/DucTranThien/Project-FCJ-Face-Recognition-Attendance-System_FCJ-Trainee.git
-cd fcj-face-checkin/backend
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-2. 🚀 Zappa Deployment (Backend)
+Backend (API Gateway): https://go18cmoqsa.execute-api.ap-southeast-1.amazonaws.com/default
+
+1. 🛠️ Install Python & Zappa
 bash
 Copy
 Edit
-zappa init          # if not yet initialized
+pip install zappa
+2. ⚙️ Configure Deployment
+Update zappa_settings.json:
+
+json
+Copy
+Edit
+{
+  "production": {
+    "app_function": "app.app",
+    "aws_region": "ap-southeast-1",
+    "profile_name": "default",
+    "project_name": "fcj-checkin",
+    "runtime": "python3.9",
+    "s3_bucket": "fcj-checkin-zappa-deployments"
+  }
+}
+3. 🚀 Deploy to AWS
+bash
+Copy
+Edit
 zappa deploy production
-✅ Region: ap-southeast-1
-✅ S3 Bucket: fcj-checkin-zappa-deployments
+📈 Metrics Dashboard (Sample)
+✅ Total Check-ins: 10
 
-3. 🌐 S3 + CloudFront (Frontend)
-bash
-Copy
-Edit
-aws s3 sync static_frontend/ s3://your-bucket-name/
-aws cloudfront create-invalidation --distribution-id XYZ123 --paths "/*"
-🔒 Security
-AWS IAM scoped access
+🔥 Day Streak: 5
 
-OTP (One-Time Password) email verification
+📊 Success Rate: 80.0%
 
-CORS + HTTPS enforced
+⏱️ Punctuality Tracking: Completed Late, On-time, etc.
 
-S3 public policy restricted to static frontend only
 
-📊 Business Impact
-Metric	Result
-Attendance accuracy	> 95%
-Manual HR time reduced	-40%
-Cost saving over RFID/Biometrics	Up to 50%
-Uptime (Lambda + S3)	99.95%
-Performance users supported	100+ active
+🧠 Technologies Used
+Layer	Stack
+Frontend	HTML5, Bootstrap 5, JavaScript
+Backend	Python, Flask, Zappa
+Cloud Services	AWS S3, Lambda, API Gateway, Rekognition, DynamoDB
+Email OTP	SMTP / Amazon SES
 
-📈 Future Roadmap
- Admin user roles & permissions
+🛡️ Security
+✅ IAM with least privilege
 
- Behavior-based anomaly detection with ML
+✅ CORS restrictions on S3/API
 
- Multi-region face indexing
+✅ Email-based MFA OTP
 
- SES email domain migration (production)
+✅ Face-based verification (no password alone)
+
+🧪 Testing
+✔️ Postman API tests for /login, /register, /checkin
+
+✔️ Lambda CloudWatch logs
+
+✔️ Manual validation of check-in success/fail logic
+
+💵 Cost Estimation
+Service	Monthly Estimate
+Lambda	Free (under 1M)
+S3	~$0.05
+Rekognition	~$1
+DynamoDB	Free Tier
+SES/SMTP	Free (Gmail)
+Total	~$1.05/month
 
 🧑‍💻 Author
-Tran Thien Duc
-FCJ Trainee @ AWS
-💼 LinkedIn | ✉️ ductran06629@gmail.com
+Duc Tran Thien
+@ducdeptrai
+FCJ Trainee – AWS First Cloud Journey
+Built with ❤️ on AWS
 
