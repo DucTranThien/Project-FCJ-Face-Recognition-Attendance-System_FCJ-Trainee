@@ -127,5 +127,5 @@ Performance users supported	100+ active
 🧑‍💻 Author
 Tran Thien Duc
 FCJ Trainee @ AWS
-💼 LinkedIn | ✉️ duc@example.com
+💼 LinkedIn | ✉️ ductran06629@gmail.com
 
