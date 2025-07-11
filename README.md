@@ -67,10 +67,6 @@ fcj-checkin/
 ├── zappa_settings.json # Zappa deployment settings
 └── README.md
 
-yaml
-Copy
-Edit
-
 ---
 
 ## 🔧 Setup & Deployment
