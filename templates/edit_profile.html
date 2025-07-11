@@ -1,0 +1,340 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Profile - FCJ Face Check-in{% endblock %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center bg-light py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-5">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <div class="mb-3">
+                                <i class="bi bi-person-gear text-primary" style="font-size: 3.5rem;"></i>
+                            </div>
+                            <h2 class="fw-bold text-dark mb-2">Edit Profile</h2>
+                            <p class="text-muted">Update your account information</p>
+                        </div>
+
+                        <!-- Edit Form -->
+                        <form method="POST" class="needs-validation" novalidate enctype="multipart/form-data">
+                            <div class="row">
+                                <!-- Left Column - User Info -->
+                                <div class="col-lg-6">
+                                    <div class="pe-lg-4">
+                                        <h5 class="mb-3 text-primary">
+                                            <i class="bi bi-person-circle me-2"></i>Personal Information
+                                        </h5>
+                                        
+                                        <div class="mb-4">
+                                            <label for="username" class="form-label fw-semibold">
+                                                <i class="bi bi-at me-2 text-muted"></i>Username
+                                            </label>
+                                            <input type="text" 
+                                                   class="form-control form-control-lg rounded-3" 
+                                                   id="username" 
+                                                   value="{{ user.get('username', '') }}"
+                                                   readonly
+                                                   style="background-color: #f8f9fa;">
+                                            <small class="text-muted">Username cannot be changed</small>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label for="full_name" class="form-label fw-semibold">
+                                                <i class="bi bi-person me-2 text-primary"></i>Full Name
+                                            </label>
+                                            <input type="text" 
+                                                   class="form-control form-control-lg rounded-3" 
+                                                   id="full_name" 
+                                                   name="full_name" 
+                                                   value="{{ user.get('full_name', '') }}"
+                                                   placeholder="Enter your full name"
+                                                   required>
+                                            <div class="invalid-feedback">
+                                                Please enter your full name.
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label for="email" class="form-label fw-semibold">
+                                                <i class="bi bi-envelope me-2 text-primary"></i>Email Address
+                                            </label>
+                                            <input type="email" 
+                                                   class="form-control form-control-lg rounded-3" 
+                                                   id="email" 
+                                                   name="email" 
+                                                   value="{{ user.get('email', '') }}"
+                                                   placeholder="Enter your email address"
+                                                   {% if not user.get('email') or session.pending_login %}required{% endif %}>
+                                            <div class="invalid-feedback">
+                                                Please enter a valid email address.
+                                            </div>
+                                            {% if not user.get('email') or session.pending_login %}
+                                                <small class="text-warning">
+                                                    <i class="bi bi-exclamation-triangle"></i> 
+                                                    Email is required for secure login with OTP verification
+                                                </small>
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label for="password" class="form-label fw-semibold">
+                                                <i class="bi bi-lock-fill me-2 text-primary"></i>New Password
+                                            </label>
+                                            <input type="password" 
+                                                   class="form-control form-control-lg rounded-3" 
+                                                   id="password" 
+                                                   name="password" 
+                                                   placeholder="Leave blank to keep current password">
+                                            <small class="text-muted">Leave blank if you don't want to change password</small>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label for="confirm_password" class="form-label fw-semibold">
+                                                <i class="bi bi-lock-check me-2 text-primary"></i>Confirm Password
+                                            </label>
+                                            <input type="password" 
+                                                   class="form-control form-control-lg rounded-3" 
+                                                   id="confirm_password" 
+                                                   name="confirm_password" 
+                                                   placeholder="Confirm new password">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column - Face Image -->
+                                <div class="col-lg-6">
+                                    <div class="ps-lg-4">
+                                        <h5 class="mb-3 text-success">
+                                            <i class="bi bi-camera me-2"></i>Update Face Image
+                                        </h5>
+                                        
+                                        <!-- Current Image -->
+                                        <div class="text-center mb-4">
+                                            <img src="{{ user.get('image_url', url_for('static', filename='default-avatar.svg')) }}" 
+                                                 alt="Current Profile" 
+                                                 class="rounded-circle shadow-sm" 
+                                                 style="width: 150px; height: 150px; object-fit: cover;"
+                                                 onerror="this.onerror=null; this.src='/static/default-avatar.svg'">
+                                            <p class="text-muted mt-2 mb-0">Current Image</p>
+                                        </div>
+                                        
+                                        <!-- Option Selection -->
+                                        <div class="mb-3">
+                                            <div class="btn-group w-100" role="group">
+                                                <input type="radio" class="btn-check" name="imageOption" id="uploadOption" value="upload" checked>
+                                                <label class="btn btn-outline-primary rounded-start-3" for="uploadOption">
+                                                    <i class="bi bi-upload me-2"></i>Upload New
+                                                </label>
+                                                
+                                                <input type="radio" class="btn-check" name="imageOption" id="cameraOption" value="camera">
+                                                <label class="btn btn-outline-success rounded-end-3" for="cameraOption">
+                                                    <i class="bi bi-camera me-2"></i>Use Camera
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Upload Section -->
+                                        <div id="uploadSection" class="mb-4">
+                                            <input type="file" 
+                                                   id="fileInput" 
+                                                   name="face_image_file"
+                                                   accept="image/jpeg,image/jpg,image/png" 
+                                                   class="form-control rounded-3">
+                                            <small class="text-muted">Optional: Upload new face image (JPG, PNG)</small>
+                                        </div>
+                                        
+                                        <!-- Camera Section -->
+                                        <div id="cameraSection" class="mb-4" style="display: none;">
+                                            <div class="card bg-light border-2 border-dashed rounded-4">
+                                                <div class="card-body text-center p-3">
+                                                    <div class="camera-container mb-3" style="min-height: 200px;">
+                                                        <video id="video" autoplay class="rounded-3" style="width: 100%; max-width: 250px; display: none;"></video>
+                                                        <canvas id="canvas" class="rounded-3" style="width: 100%; max-width: 250px; display: none;"></canvas>
+                                                        <div id="cameraPlaceholder" class="text-center py-4">
+                                                            <i class="bi bi-camera-fill text-muted" style="font-size: 2rem;"></i>
+                                                            <p class="text-muted mt-2 mb-0">Camera preview</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-grid gap-2">
+                                                        <button type="button" id="startCamera" class="btn btn-outline-success rounded-3">
+                                                            <i class="bi bi-camera-video me-2"></i>Start Camera
+                                                        </button>
+                                                        <button type="button" id="captureBtn" class="btn btn-success rounded-3" style="display: none;">
+                                                            <i class="bi bi-camera me-2"></i>Capture
+                                                        </button>
+                                                        <button type="button" id="retakeBtn" class="btn btn-warning rounded-3" style="display: none;">
+                                                            <i class="bi bi-arrow-clockwise me-2"></i>Retake
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Buttons -->
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-success btn-lg px-5 rounded-3 fw-semibold me-3">
+                                    <i class="bi bi-check-circle me-2"></i>Update Profile
+                                </button>
+                                <a href="{{ url_for('profile') }}" class="btn btn-outline-secondary btn-lg px-4 rounded-3">
+                                    <i class="bi bi-x-circle me-2"></i>Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Enhanced edit profile functionality
+class EditProfileManager {
+    constructor() {
+        this.video = document.getElementById('video');
+        this.canvas = document.getElementById('canvas');
+        this.startBtn = document.getElementById('startCamera');
+        this.captureBtn = document.getElementById('captureBtn');
+        this.retakeBtn = document.getElementById('retakeBtn');
+        this.cameraPlaceholder = document.getElementById('cameraPlaceholder');
+        this.uploadSection = document.getElementById('uploadSection');
+        this.cameraSection = document.getElementById('cameraSection');
+        this.stream = null;
+        
+        this.initializeEvents();
+    }
+    
+    initializeEvents() {
+        // Option toggle
+        document.querySelectorAll('input[name="imageOption"]').forEach(radio => {
+            radio.addEventListener('change', (e) => this.toggleImageOption(e.target.value));
+        });
+        
+        // Camera controls
+        this.startBtn.addEventListener('click', () => this.startCamera());
+        this.captureBtn.addEventListener('click', () => this.captureImage());
+        this.retakeBtn.addEventListener('click', () => this.retakeImage());
+        
+        // Password confirmation
+        document.getElementById('confirm_password').addEventListener('input', this.validatePasswords);
+        document.getElementById('password').addEventListener('input', this.validatePasswords);
+    }
+    
+    toggleImageOption(option) {
+        if (option === 'upload') {
+            this.uploadSection.style.display = 'block';
+            this.cameraSection.style.display = 'none';
+            this.stopCamera();
+        } else {
+            this.uploadSection.style.display = 'none';
+            this.cameraSection.style.display = 'block';
+        }
+    }
+    
+    validatePasswords() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+        
+        if (password && confirmPassword && password !== confirmPassword) {
+            document.getElementById('confirm_password').setCustomValidity('Passwords do not match');
+        } else {
+            document.getElementById('confirm_password').setCustomValidity('');
+        }
+    }
+    
+    async startCamera() {
+        try {
+            this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            this.video.srcObject = this.stream;
+            
+            this.cameraPlaceholder.style.display = 'none';
+            this.video.style.display = 'block';
+            this.startBtn.style.display = 'none';
+            this.captureBtn.style.display = 'block';
+        } catch (error) {
+            alert('Camera access denied or not available');
+        }
+    }
+    
+    captureImage() {
+        const context = this.canvas.getContext('2d');
+        this.canvas.width = this.video.videoWidth;
+        this.canvas.height = this.video.videoHeight;
+        context.drawImage(this.video, 0, 0);
+        
+        this.video.style.display = 'none';
+        this.canvas.style.display = 'block';
+        this.captureBtn.style.display = 'none';
+        this.retakeBtn.style.display = 'block';
+        
+        // Store image data
+        const imageData = this.canvas.toDataURL('image/jpeg');
+        this.addHiddenInput('face_image_data', imageData);
+    }
+    
+    retakeImage() {
+        this.canvas.style.display = 'none';
+        this.video.style.display = 'block';
+        this.retakeBtn.style.display = 'none';
+        this.captureBtn.style.display = 'block';
+        
+        this.removeHiddenInput('face_image_data');
+    }
+    
+    stopCamera() {
+        if (this.stream) {
+            this.stream.getTracks().forEach(track => track.stop());
+            this.stream = null;
+        }
+        this.video.style.display = 'none';
+        this.canvas.style.display = 'none';
+        this.cameraPlaceholder.style.display = 'block';
+        this.startBtn.style.display = 'block';
+        this.captureBtn.style.display = 'none';
+        this.retakeBtn.style.display = 'none';
+    }
+    
+    addHiddenInput(name, value) {
+        this.removeHiddenInput(name);
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = name;
+        hiddenInput.value = value;
+        document.querySelector('form').appendChild(hiddenInput);
+    }
+    
+    removeHiddenInput(name) {
+        const existing = document.querySelector(`input[name="${name}"]`);
+        if (existing) existing.remove();
+    }
+}
+
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    new EditProfileManager();
+});
+</script>
+{% endblock %}

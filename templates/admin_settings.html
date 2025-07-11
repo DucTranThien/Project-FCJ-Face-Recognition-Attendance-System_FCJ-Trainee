@@ -1,0 +1,422 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Settings - FCJ Face Check-in{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="bi bi-gear-fill"></i> System Settings</h2>
+                <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary">
+                    <i class="bi bi-arrow-left"></i> Back to Admin
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <form method="POST" id="settingsForm">
+        <div class="row">
+            <!-- Time Windows Settings -->
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-clock"></i> Check-in Time Windows</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="text-primary">Morning Session</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Start Time</label>
+                                    <input type="time" class="form-control" name="morning_start" 
+                                           value="{{ settings.morning_start }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">End Time</label>
+                                    <input type="time" class="form-control" name="morning_end" 
+                                           value="{{ settings.morning_end }}" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-warning">Evening Session</h6>
+                                <div class="mb-3">
+                                    <label class="form-label">Start Time</label>
+                                    <input type="time" class="form-control" name="evening_start" 
+                                           value="{{ settings.evening_start }}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">End Time</label>
+                                    <input type="time" class="form-control" name="evening_end" 
+                                           value="{{ settings.evening_end }}" required>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recognition & Rules Settings -->
+            <div class="col-lg-6">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-shield-check"></i> Recognition & Rules</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Similarity Threshold (%)</label>
+                            <div class="input-group">
+                                <input type="number" class="form-control" name="similarity_threshold" 
+                                       value="{{ settings.similarity_threshold }}" min="0" max="100" step="0.1" required>
+                                <span class="input-group-text">%</span>
+                            </div>
+                            <div class="form-text">Minimum face similarity required for successful check-in</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="allow_late_checkin" 
+                                       {% if settings.allow_late_checkin %}checked{% endif %}>
+                                <label class="form-check-label">
+                                    Allow Late Check-in
+                                </label>
+                            </div>
+                            <div class="form-text">Allow check-ins outside designated time windows</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" name="prevent_duplicate_checkin" 
+                                       {% if settings.prevent_duplicate_checkin %}checked{% endif %}>
+                                <label class="form-check-label">
+                                    Prevent Duplicate Check-in
+                                </label>
+                            </div>
+                            <div class="form-text">Block multiple check-ins for the same session</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Current Settings Preview -->
+        <div class="row">
+            <div class="col-12">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <h5 class="mb-0"><i class="bi bi-eye"></i> Current Settings Preview</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <i class="bi bi-sunrise text-primary" style="font-size: 2rem;"></i>
+                                    <h6 class="mt-2">Morning</h6>
+                                    <span class="badge bg-primary" id="morning-preview">
+                                        {{ settings.morning_start }} - {{ settings.morning_end }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <i class="bi bi-sunset text-warning" style="font-size: 2rem;"></i>
+                                    <h6 class="mt-2">Evening</h6>
+                                    <span class="badge bg-warning" id="evening-preview">
+                                        {{ settings.evening_start }} - {{ settings.evening_end }}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <i class="bi bi-percent text-success" style="font-size: 2rem;"></i>
+                                    <h6 class="mt-2">Threshold</h6>
+                                    <span class="badge bg-success" id="threshold-preview">
+                                        {{ settings.similarity_threshold }}%
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="text-center p-3 bg-light rounded">
+                                    <i class="bi bi-gear text-info" style="font-size: 2rem;"></i>
+                                    <h6 class="mt-2">Rules</h6>
+                                    <div>
+                                        <span class="badge bg-{% if settings.allow_late_checkin %}success{% else %}secondary{% endif %} d-block mb-1">
+                                            Late: {% if settings.allow_late_checkin %}Allowed{% else %}Blocked{% endif %}
+                                        </span>
+                                        <span class="badge bg-{% if settings.prevent_duplicate_checkin %}success{% else %}secondary{% endif %}">
+                                            Duplicates: {% if settings.prevent_duplicate_checkin %}Blocked{% else %}Allowed{% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div class="row">
+            <div class="col-12">
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="button" class="btn btn-outline-secondary me-md-2" onclick="resetForm()">
+                        <i class="bi bi-arrow-clockwise"></i> Reset
+                    </button>
+                    <button type="button" class="btn btn-outline-info me-md-2" onclick="resetToDefaults()">
+                        <i class="bi bi-gear"></i> Defaults
+                    </button>
+                    <button type="submit" class="btn btn-primary btn-lg" id="saveBtn">
+                        <i class="bi bi-check-circle"></i> Save Settings
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script>
+// Real-time preview updates
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('settingsForm');
+    const inputs = form.querySelectorAll('input');
+    
+    inputs.forEach(input => {
+        input.addEventListener('input', updatePreview);
+        input.addEventListener('change', updatePreview);
+    });
+    
+    function updatePreview() {
+        // Update time previews
+        const morningStart = document.querySelector('input[name="morning_start"]').value;
+        const morningEnd = document.querySelector('input[name="morning_end"]').value;
+        const eveningStart = document.querySelector('input[name="evening_start"]').value;
+        const eveningEnd = document.querySelector('input[name="evening_end"]').value;
+        const threshold = document.querySelector('input[name="similarity_threshold"]').value;
+        const allowLate = document.querySelector('input[name="allow_late_checkin"]').checked;
+        const preventDuplicate = document.querySelector('input[name="prevent_duplicate_checkin"]').checked;
+        
+        document.getElementById('morning-preview').textContent = `${morningStart} - ${morningEnd}`;
+        document.getElementById('evening-preview').textContent = `${eveningStart} - ${eveningEnd}`;
+        document.getElementById('threshold-preview').textContent = `${threshold}%`;
+        
+        // Update rule badges
+        const lateRule = document.querySelector('.badge:contains("Late:")');
+        const duplicateRule = document.querySelector('.badge:contains("Duplicates:")');
+        
+        // Update late rule badge
+        const lateBadges = document.querySelectorAll('.badge');
+        lateBadges.forEach(badge => {
+            if (badge.textContent.includes('Late:')) {
+                badge.textContent = `Late: ${allowLate ? 'Allowed' : 'Blocked'}`;
+                badge.className = `badge bg-${allowLate ? 'success' : 'secondary'} d-block mb-1`;
+            }
+            if (badge.textContent.includes('Duplicates:')) {
+                badge.textContent = `Duplicates: ${preventDuplicate ? 'Blocked' : 'Allowed'}`;
+                badge.className = `badge bg-${preventDuplicate ? 'success' : 'secondary'}`;
+            }
+        });
+    }
+});
+
+function resetForm() {
+    if (confirm('Reset all settings to current saved values?')) {
+        location.reload();
+    }
+}
+
+// Form validation and AJAX submission
+document.getElementById('settingsForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const morningStart = document.querySelector('input[name="morning_start"]').value;
+    const morningEnd = document.querySelector('input[name="morning_end"]').value;
+    const eveningStart = document.querySelector('input[name="evening_start"]').value;
+    const eveningEnd = document.querySelector('input[name="evening_end"]').value;
+    const threshold = parseFloat(document.querySelector('input[name="similarity_threshold"]').value);
+    const allowLate = document.querySelector('input[name="allow_late_checkin"]').checked;
+    const preventDuplicate = document.querySelector('input[name="prevent_duplicate_checkin"]').checked;
+    
+    // Validate inputs
+    let errors = [];
+    
+    if (morningStart >= morningEnd) {
+        errors.push('Morning start time must be before end time');
+    }
+    
+    if (eveningStart >= eveningEnd) {
+        errors.push('Evening start time must be before end time');
+    }
+    
+    if (threshold < 80 || threshold > 100) {
+        errors.push('Similarity threshold must be between 80 and 100');
+    }
+    
+    if (errors.length > 0) {
+        showAlert('Please fix the following errors:\n\n' + errors.join('\n'), 'danger');
+        return;
+    }
+    
+    // Show loading state
+    const saveBtn = document.getElementById('saveBtn');
+    const originalText = saveBtn.innerHTML;
+    saveBtn.disabled = true;
+    saveBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Saving...';
+    
+    // Prepare data
+    const formData = {
+        morning_start: morningStart,
+        morning_end: morningEnd,
+        evening_start: eveningStart,
+        evening_end: eveningEnd,
+        similarity_threshold: threshold,
+        allow_late_checkin: allowLate,
+        prevent_duplicate_checkin: preventDuplicate
+    };
+    
+    // Submit via AJAX
+    fetch('/admin/save_settings', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            showAlert('✅ Settings updated successfully! Changes are now active.', 'success');
+            showConfirmationPreview(formData);
+        } else {
+            showAlert('❌ ' + (data.error || 'Failed to update settings'), 'danger');
+        }
+    })
+    .catch(error => {
+        showAlert('❌ Network error. Please try again.', 'danger');
+    })
+    .finally(() => {
+        // Reset button
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = originalText;
+    });
+});
+
+function showAlert(message, type) {
+    const alertDiv = document.createElement('div');
+    alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+    alertDiv.innerHTML = `
+        ${message}
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    `;
+    
+    const container = document.querySelector('.container');
+    container.insertBefore(alertDiv, container.firstChild);
+    
+    // Auto-dismiss after 5 seconds
+    setTimeout(() => {
+        if (alertDiv.parentNode) {
+            alertDiv.remove();
+        }
+    }, 5000);
+}
+
+function showConfirmationPreview(data) {
+    const preview = `
+        <div class="alert alert-info mt-3">
+            <h6><i class="bi bi-info-circle"></i> Updated Settings Preview:</h6>
+            <p class="mb-1"><strong>Morning:</strong> ${data.morning_start} - ${data.morning_end}</p>
+            <p class="mb-1"><strong>Evening:</strong> ${data.evening_start} - ${data.evening_end}</p>
+            <p class="mb-1"><strong>Threshold:</strong> ${data.similarity_threshold}%</p>
+            <p class="mb-0"><strong>Rules:</strong> Late ${data.allow_late_checkin ? 'Allowed' : 'Blocked'}, Duplicates ${data.prevent_duplicate_checkin ? 'Blocked' : 'Allowed'}</p>
+        </div>
+    `;
+    
+    const existingPreview = document.querySelector('.confirmation-preview');
+    if (existingPreview) {
+        existingPreview.remove();
+    }
+    
+    const previewDiv = document.createElement('div');
+    previewDiv.className = 'confirmation-preview';
+    previewDiv.innerHTML = preview;
+    
+    document.querySelector('form').appendChild(previewDiv);
+}
+
+function resetToDefaults() {
+    if (confirm('Reset all settings to system defaults?')) {
+        document.querySelector('input[name="morning_start"]').value = '08:30';
+        document.querySelector('input[name="morning_end"]').value = '10:00';
+        document.querySelector('input[name="evening_start"]').value = '16:30';
+        document.querySelector('input[name="evening_end"]').value = '18:00';
+        document.querySelector('input[name="similarity_threshold"]').value = '95';
+        document.querySelector('input[name="allow_late_checkin"]').checked = true;
+        document.querySelector('input[name="prevent_duplicate_checkin"]').checked = true;
+        updatePreview();
+    }
+}
+</script>
+
+<style>
+.card {
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+}
+
+.form-check-input:checked {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.badge {
+    font-size: 0.75em;
+    padding: 0.35em 0.65em;
+}
+
+.alert {
+    border: none;
+    border-radius: 8px;
+}
+
+.btn {
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+    transform: translateY(-1px);
+}
+
+#saveBtn:disabled {
+    opacity: 0.7;
+    transform: none;
+}
+
+.confirmation-preview {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.bg-light {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+}
+</style>
+{% endblock %}

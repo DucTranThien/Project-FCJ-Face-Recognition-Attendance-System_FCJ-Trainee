@@ -1,0 +1,443 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Profile - FCJ Face Check-in{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10 col-xl-8">
+            <!-- Header Card -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <div class="col">
+                            <h2 class="mb-1"><i class="bi bi-shield-check text-warning"></i> Administrator Profile</h2>
+                            <p class="text-muted mb-0">System administration and management overview</p>
+                        </div>
+                        <div class="col-auto">
+                            <a href="{{ url_for('admin') }}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left"></i> Back to Admin Panel
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!-- Profile Summary Card -->
+                <div class="col-lg-4">
+                    <div class="card mb-4">
+                        <div class="card-body text-center">
+                            <div class="admin-avatar mb-3">
+                                <i class="bi bi-person-badge-fill"></i>
+                            </div>
+                            <h5 class="mb-1">{{ admin_info.full_name }}</h5>
+                            <p class="text-muted mb-3">{{ admin_info.role }}</p>
+                            
+                            <span class="badge bg-warning text-dark mb-3">
+                                <i class="bi bi-shield-check"></i> System Administrator
+                            </span>
+                            
+                            <div class="admin-stats mt-3">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <div class="border-end">
+                                            <h4 class="text-primary mb-1">{{ admin_stats.total_users }}</h4>
+                                            <small class="text-muted">Users Managed</small>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <h4 class="text-success mb-1">{{ admin_stats.system_uptime }}</h4>
+                                        <small class="text-muted">System Uptime</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- AWS Services Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h6 class="mb-0"><i class="bi bi-cloud text-warning"></i> Assigned AWS Services</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="aws-service-item">
+                                <div class="service-icon rekognition">
+                                    <i class="bi bi-eye"></i>
+                                </div>
+                                <div class="service-info">
+                                    <h6>Amazon Rekognition</h6>
+                                    <small class="text-muted">Face Analysis & Recognition</small>
+                                </div>
+                            </div>
+                            
+                            <div class="aws-service-item">
+                                <div class="service-icon dynamodb">
+                                    <i class="bi bi-database"></i>
+                                </div>
+                                <div class="service-info">
+                                    <h6>Amazon DynamoDB</h6>
+                                    <small class="text-muted">User & Check-in Data</small>
+                                </div>
+                            </div>
+                            
+                            <div class="aws-service-item">
+                                <div class="service-icon s3">
+                                    <i class="bi bi-cloud"></i>
+                                </div>
+                                <div class="service-info">
+                                    <h6>Amazon S3</h6>
+                                    <small class="text-muted">Image Storage & Management</small>
+                                </div>
+                            </div>
+                            
+                            <div class="aws-service-item">
+                                <div class="service-icon ses">
+                                    <i class="bi bi-envelope"></i>
+                                </div>
+                                <div class="service-info">
+                                    <h6>Amazon SES</h6>
+                                    <small class="text-muted">Email Delivery Service</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Profile Details Card -->
+                <div class="col-lg-8">
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-info-circle"></i> Administrator Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label class="info-label">
+                                            <i class="bi bi-person me-2 text-primary"></i>Full Name
+                                        </label>
+                                        <p class="info-value">{{ admin_info.full_name }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label class="info-label">
+                                            <i class="bi bi-at me-2 text-muted"></i>Username
+                                        </label>
+                                        <p class="info-value">{{ admin_info.username }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label class="info-label">
+                                            <i class="bi bi-envelope me-2 text-primary"></i>Contact Email
+                                        </label>
+                                        <p class="info-value">{{ admin_info.email }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label class="info-label">
+                                            <i class="bi bi-shield me-2 text-warning"></i>Admin Role
+                                        </label>
+                                        <p class="info-value">{{ admin_info.role }}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label class="info-label">
+                                            <i class="bi bi-calendar me-2 text-info"></i>Admin Since
+                                        </label>
+                                        <p class="info-value">{{ admin_info.created_at[:10] if admin_info.created_at else 'N/A' }}</p>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="info-item">
+                                        <label class="info-label">
+                                            <i class="bi bi-check-circle me-2 text-success"></i>Status
+                                        </label>
+                                        <p class="info-value">
+                                            <span class="badge bg-success">Active</span>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Responsibilities Card -->
+                    <div class="card mb-4">
+                        <div class="card-header">
+                            <h5 class="mb-0"><i class="bi bi-list-check"></i> System Overview & Responsibilities</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="responsibility-grid">
+                                <div class="responsibility-item">
+                                    <div class="resp-icon">
+                                        <i class="bi bi-people"></i>
+                                    </div>
+                                    <div class="resp-content">
+                                        <h6>User Management</h6>
+                                        <p>Oversee user accounts, permissions, and access control across the FCJ system.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="responsibility-item">
+                                    <div class="resp-icon">
+                                        <i class="bi bi-graph-up"></i>
+                                    </div>
+                                    <div class="resp-content">
+                                        <h6>System Analytics</h6>
+                                        <p>Monitor attendance patterns, generate reports, and analyze system performance metrics.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="responsibility-item">
+                                    <div class="resp-icon">
+                                        <i class="bi bi-shield-check"></i>
+                                    </div>
+                                    <div class="resp-content">
+                                        <h6>Security Oversight</h6>
+                                        <p>Ensure system security, manage AWS services, and maintain compliance standards.</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="responsibility-item">
+                                    <div class="resp-icon">
+                                        <i class="bi bi-gear"></i>
+                                    </div>
+                                    <div class="resp-content">
+                                        <h6>System Configuration</h6>
+                                        <p>Configure attendance policies, manage integrations, and optimize system settings.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Activity Log Card -->
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h5 class="mb-0"><i class="bi bi-clock-history"></i> Recent Admin Activity</h5>
+                                <small class="text-muted">Last 7 days</small>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="activity-timeline">
+                                {% for activity in admin_activities %}
+                                <div class="activity-item">
+                                    <div class="activity-icon {{ activity.type }}">
+                                        <i class="bi bi-{{ activity.icon }}"></i>
+                                    </div>
+                                    <div class="activity-content">
+                                        <h6 class="activity-title">{{ activity.title }}</h6>
+                                        <p class="activity-description">{{ activity.description }}</p>
+                                        <small class="activity-time">{{ activity.timestamp }}</small>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.admin-avatar {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ffc107 0%, #ff8c00 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+    font-size: 2.5rem;
+    color: white;
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+.admin-stats {
+    margin-top: 1.5rem;
+}
+
+.aws-service-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.aws-service-item:last-child {
+    border-bottom: none;
+}
+
+.service-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.1rem;
+}
+
+.service-icon.rekognition { background: #ff9900; }
+.service-icon.dynamodb { background: #3f48cc; }
+.service-icon.s3 { background: #569a31; }
+.service-icon.ses { background: #dd344c; }
+
+.service-info h6 {
+    margin: 0;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.info-item {
+    margin-bottom: 1.5rem;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #495057;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.info-value {
+    margin: 0;
+    color: #2c3e50;
+    font-weight: 500;
+}
+
+.responsibility-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.responsibility-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #007bff;
+}
+
+.resp-icon {
+    width: 48px;
+    height: 48px;
+    background: #007bff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+}
+
+.resp-content h6 {
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.resp-content p {
+    margin: 0;
+    color: #6c757d;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.activity-timeline {
+    position: relative;
+}
+
+.activity-item {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+}
+
+.activity-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 20px;
+    top: 48px;
+    width: 2px;
+    height: calc(100% - 8px);
+    background: #e9ecef;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.activity-icon.user { background: #28a745; }
+.activity-icon.report { background: #17a2b8; }
+.activity-icon.system { background: #ffc107; }
+.activity-icon.security { background: #dc3545; }
+
+.activity-content {
+    flex: 1;
+}
+
+.activity-title {
+    margin: 0 0 0.25rem 0;
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.95rem;
+}
+
+.activity-description {
+    margin: 0 0 0.25rem 0;
+    color: #6c757d;
+    font-size: 0.85rem;
+    line-height: 1.4;
+}
+
+.activity-time {
+    color: #adb5bd;
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .responsibility-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .activity-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .activity-item::after {
+        display: none;
+    }
+}
+</style>
+{% endblock %}

@@ -1,0 +1,543 @@
+{% extends "base.html" %}
+
+{% block title %}Create Account - FCJ Face Check-in{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-background"></div>
+    
+    <div class="container-fluid h-100">
+        <div class="row h-100 align-items-center justify-content-center py-4">
+            <div class="col-lg-5 col-md-7 col-sm-9">
+                <div class="auth-card">
+                    <!-- Header -->
+                    <div class="auth-header text-center mb-4">
+                        <div class="brand-logo mb-3">
+                            <img src="{{ url_for('static', filename='images/logo_checkin.jpg') }}" alt="FCJ Logo" class="logo-img">
+                        </div>
+                        <h2 class="auth-title">Create Account</h2>
+                        <p class="auth-subtitle">Join the FCJ Check-in system</p>
+                    </div>
+
+                    <!-- Registration Form -->
+                    <form method="POST" class="auth-form" id="registerForm" enctype="multipart/form-data">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="full_name" 
+                                           name="full_name" 
+                                           placeholder="Full Name"
+                                           required>
+                                    <label for="full_name">
+                                        <i class="bi bi-person me-2"></i>Full Name
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="text" 
+                                           class="form-control" 
+                                           id="username" 
+                                           name="username" 
+                                           placeholder="Username"
+                                           required
+                                           autocomplete="username">
+                                    <label for="username">
+                                        <i class="bi bi-at me-2"></i>Username
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input type="email" 
+                                   class="form-control" 
+                                   id="email" 
+                                   name="email" 
+                                   placeholder="Email Address"
+                                   required
+                                   autocomplete="email">
+                            <label for="email">
+                                <i class="bi bi-envelope me-2"></i>Email Address
+                            </label>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="password" 
+                                           name="password" 
+                                           placeholder="Password"
+                                           required
+                                           autocomplete="new-password">
+                                    <label for="password">
+                                        <i class="bi bi-lock me-2"></i>Password
+                                    </label>
+                                    <button class="btn btn-link password-toggle" 
+                                            type="button" 
+                                            id="togglePassword">
+                                        <i class="bi bi-eye" id="toggleIcon"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-floating mb-3">
+                                    <input type="password" 
+                                           class="form-control" 
+                                           id="confirm_password" 
+                                           name="confirm_password" 
+                                           placeholder="Confirm Password"
+                                           required
+                                           autocomplete="new-password">
+                                    <label for="confirm_password">
+                                        <i class="bi bi-lock-fill me-2"></i>Confirm Password
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Password Strength Meter -->
+                        <div class="password-strength mb-3" id="passwordStrength" style="display: none;">
+                            <div class="strength-meter">
+                                <div class="strength-bar" id="strengthBar"></div>
+                            </div>
+                            <small class="strength-text" id="strengthText">Password strength</small>
+                        </div>
+
+                        <!-- Face Image Upload -->
+                        <div class="face-upload-section mb-4">
+                            <h6 class="mb-3">
+                                <i class="bi bi-camera me-2"></i>Profile Photo for Face Recognition
+                            </h6>
+                            
+                            <!-- Upload Options -->
+                            <div class="upload-options mb-3">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <label for="face_image_file" class="btn btn-outline-primary w-100">
+                                            <i class="bi bi-upload me-2"></i>Upload Photo
+                                        </label>
+                                        <input type="file" 
+                                               class="d-none" 
+                                               id="face_image_file" 
+                                               name="face_image_file" 
+                                               accept="image/*">
+                                    </div>
+                                    <div class="col-6">
+                                        <button type="button" class="btn btn-outline-secondary w-100" id="captureBtn">
+                                            <i class="bi bi-camera me-2"></i>Take Photo
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Camera Preview -->
+                            <div class="camera-section" id="cameraSection" style="display: none;">
+                                <video id="video" class="camera-preview" autoplay muted></video>
+                                <canvas id="canvas" style="display: none;"></canvas>
+                                <div class="camera-controls mt-2">
+                                    <button type="button" class="btn btn-success me-2" id="snapBtn">
+                                        <i class="bi bi-camera"></i> Capture
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" id="cancelBtn">
+                                        <i class="bi bi-x"></i> Cancel
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Image Preview -->
+                            <div class="image-preview" id="imagePreview" style="display: none;">
+                                <img id="previewImg" class="preview-image" alt="Preview">
+                                <div class="preview-controls mt-2">
+                                    <button type="button" class="btn btn-outline-danger btn-sm" id="removeBtn">
+                                        <i class="bi bi-trash"></i> Remove
+                                    </button>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="face_image_data" id="face_image_data">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid mb-3">
+                            <button type="submit" class="btn btn-primary btn-lg auth-btn" id="registerBtn">
+                                <span class="btn-content">
+                                    <i class="bi bi-person-plus me-2"></i>Create Account
+                                </span>
+                                <span class="btn-loading d-none">
+                                    <span class="spinner-border spinner-border-sm me-2"></span>
+                                    Creating account...
+                                </span>
+                            </button>
+                        </div>
+
+                        <!-- Login Link -->
+                        <div class="auth-actions text-center">
+                            <div class="auth-divider">
+                                <span>Already have an account?</span>
+                            </div>
+                            
+                            <a href="{{ url_for('login') }}" class="btn btn-outline-primary">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.auth-container {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.auth-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    z-index: -1;
+}
+
+.auth-card {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 2.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    animation: slideUp 0.6s ease-out;
+}
+
+.brand-logo .logo-img {
+    height: 48px;
+    width: auto;
+}
+
+.auth-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.auth-subtitle {
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.form-floating > .form-control {
+    height: 3.5rem;
+    padding: 1rem 0.75rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.form-floating > .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.15);
+}
+
+.form-floating > label {
+    padding: 1rem 0.75rem;
+    color: #6c757d;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 10;
+    border: none;
+    background: none;
+    color: #6c757d;
+    padding: 0.5rem;
+}
+
+.password-strength {
+    margin-top: -0.5rem;
+}
+
+.strength-meter {
+    height: 4px;
+    background: #e9ecef;
+    border-radius: 2px;
+    overflow: hidden;
+    margin-bottom: 0.25rem;
+}
+
+.strength-bar {
+    height: 100%;
+    width: 0%;
+    transition: all 0.3s ease;
+    border-radius: 2px;
+}
+
+.strength-bar.weak { background: #dc3545; width: 25%; }
+.strength-bar.fair { background: #ffc107; width: 50%; }
+.strength-bar.good { background: #17a2b8; width: 75%; }
+.strength-bar.strong { background: #28a745; width: 100%; }
+
+.strength-text {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.face-upload-section {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    border: 2px dashed #dee2e6;
+}
+
+.camera-preview {
+    width: 100%;
+    max-width: 300px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #000;
+}
+
+.preview-image {
+    width: 100%;
+    max-width: 300px;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.auth-btn {
+    height: 3.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    border: none;
+    transition: all 0.3s ease;
+}
+
+.auth-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.3);
+}
+
+.auth-divider {
+    margin: 1rem 0;
+    position: relative;
+    text-align: center;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.auth-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: #e9ecef;
+    z-index: 1;
+}
+
+.auth-divider span {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 0 1rem;
+    position: relative;
+    z-index: 2;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (max-width: 768px) {
+    .auth-card {
+        padding: 2rem 1.5rem;
+        margin: 1rem;
+    }
+    
+    .auth-title {
+        font-size: 1.5rem;
+    }
+    
+    .upload-options .col-6 {
+        margin-bottom: 0.5rem;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Password toggle
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.getElementById('toggleIcon');
+    
+    togglePassword.addEventListener('click', function() {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        toggleIcon.className = type === 'text' ? 'bi bi-eye-slash' : 'bi bi-eye';
+    });
+    
+    // Password strength meter
+    passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        const strengthMeter = document.getElementById('passwordStrength');
+        const strengthBar = document.getElementById('strengthBar');
+        const strengthText = document.getElementById('strengthText');
+        
+        if (password.length > 0) {
+            strengthMeter.style.display = 'block';
+            const strength = calculatePasswordStrength(password);
+            
+            strengthBar.className = `strength-bar ${strength.class}`;
+            strengthText.textContent = strength.text;
+        } else {
+            strengthMeter.style.display = 'none';
+        }
+    });
+    
+    // Password confirmation validation
+    const confirmPassword = document.getElementById('confirm_password');
+    confirmPassword.addEventListener('input', function() {
+        if (this.value !== passwordInput.value) {
+            this.setCustomValidity('Passwords do not match');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+    
+    // Camera functionality
+    const captureBtn = document.getElementById('captureBtn');
+    const cameraSection = document.getElementById('cameraSection');
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const snapBtn = document.getElementById('snapBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const imagePreview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    const removeBtn = document.getElementById('removeBtn');
+    const faceImageData = document.getElementById('face_image_data');
+    
+    let stream = null;
+    
+    captureBtn.addEventListener('click', async function() {
+        try {
+            stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            video.srcObject = stream;
+            cameraSection.style.display = 'block';
+        } catch (error) {
+            notificationManager.show('Camera access denied', 'error');
+        }
+    });
+    
+    snapBtn.addEventListener('click', function() {
+        const context = canvas.getContext('2d');
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        context.drawImage(video, 0, 0);
+        
+        const dataURL = canvas.toDataURL('image/jpeg');
+        faceImageData.value = dataURL;
+        previewImg.src = dataURL;
+        
+        stopCamera();
+        cameraSection.style.display = 'none';
+        imagePreview.style.display = 'block';
+    });
+    
+    cancelBtn.addEventListener('click', function() {
+        stopCamera();
+        cameraSection.style.display = 'none';
+    });
+    
+    removeBtn.addEventListener('click', function() {
+        faceImageData.value = '';
+        imagePreview.style.display = 'none';
+        document.getElementById('face_image_file').value = '';
+    });
+    
+    // File upload
+    document.getElementById('face_image_file').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewImg.src = e.target.result;
+                imagePreview.style.display = 'block';
+                faceImageData.value = '';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Form submission
+    const registerForm = document.getElementById('registerForm');
+    const registerBtn = document.getElementById('registerBtn');
+    
+    registerForm.addEventListener('submit', function(e) {
+        if (!faceImageData.value && !document.getElementById('face_image_file').files[0]) {
+            e.preventDefault();
+            notificationManager.show('Please provide a face image', 'warning');
+            return;
+        }
+        
+        const btnContent = registerBtn.querySelector('.btn-content');
+        const btnLoading = registerBtn.querySelector('.btn-loading');
+        
+        registerBtn.disabled = true;
+        btnContent.classList.add('d-none');
+        btnLoading.classList.remove('d-none');
+    });
+    
+    function stopCamera() {
+        if (stream) {
+            stream.getTracks().forEach(track => track.stop());
+            stream = null;
+        }
+    }
+    
+    function calculatePasswordStrength(password) {
+        let score = 0;
+        
+        if (password.length >= 8) score++;
+        if (/[a-z]/.test(password)) score++;
+        if (/[A-Z]/.test(password)) score++;
+        if (/[0-9]/.test(password)) score++;
+        if (/[^A-Za-z0-9]/.test(password)) score++;
+        
+        const strengths = [
+            { class: 'weak', text: 'Weak password' },
+            { class: 'weak', text: 'Weak password' },
+            { class: 'fair', text: 'Fair password' },
+            { class: 'good', text: 'Good password' },
+            { class: 'strong', text: 'Strong password' }
+        ];
+        
+        return strengths[score] || strengths[0];
+    }
+});
+</script>
+{% endblock %}

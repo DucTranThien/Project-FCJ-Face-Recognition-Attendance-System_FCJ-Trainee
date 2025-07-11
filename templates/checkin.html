@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block title %}Check-in - FCJ Face Recognition{% endblock %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center bg-light py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow-lg border-0 rounded-4 fade-in-up">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <i class="bi bi-camera-fill text-primary" style="font-size: 3.5rem;"></i>
+                            <h2 class="fw-bold text-dark mt-3 mb-2">Face Check-in</h2>
+                            
+                            {% if checkin_status and not checkin_status.can_checkin %}
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle me-2"></i>
+                                    <strong>{{ checkin_status.message }}</strong>
+                                </div>
+                                {% if checkin_status.reason == 'outside_window' %}
+                                    <div class="alert alert-info">
+                                        <h6><i class="bi bi-clock"></i> Check-in Schedule:</h6>
+                                        <p class="mb-1"><strong>Morning:</strong> {{ checkin_status.get('time_windows', {}).get('morning', {}).get('start', '08:30') }} - {{ checkin_status.get('time_windows', {}).get('morning', {}).get('end', '10:00') }}</p>
+                                        <p class="mb-0"><strong>Evening:</strong> {{ checkin_status.get('time_windows', {}).get('evening', {}).get('start', '16:30') }} - {{ checkin_status.get('time_windows', {}).get('evening', {}).get('end', '18:00') }}</p>
+                                    </div>
+                                {% endif %}
+                            {% elif checkin_status and checkin_status.can_checkin %}
+                                <div class="alert alert-success">
+                                    <i class="bi bi-check-circle me-2"></i>
+                                    <strong>{{ checkin_status.session_type|title }} check-in window is open until {{ checkin_status.window_end }}</strong>
+                                </div>
+                                <p class="text-muted">Position your face clearly and capture for verification</p>
+                                <div class="alert alert-info">
+                                    <h6><i class="bi bi-lightbulb"></i> For Best Results:</h6>
+                                    <ul class="mb-0 text-start">
+                                        <li>Ensure good lighting on your face</li>
+                                        <li>Look directly at the camera</li>
+                                        <li>Remove any face coverings</li>
+                                        <li>Keep your face centered in the frame</li>
+                                        <li>Minimum similarity required: <strong>{{ checkin_status.get('similarity_threshold', 95) }}%</strong></li>
+                                    </ul>
+                                </div>
+                            {% else %}
+                                <p class="text-muted">Position your face clearly and capture for verification</p>
+                            {% endif %}
+                        </div>
+                    
+                    <form method="POST">
+                        <div class="row justify-content-center">
+                            <div class="col-md-8">
+                                <div class="mb-4">
+                                    <div class="camera-preview text-center">
+                                        <video id="video" autoplay style="width: 100%; max-width: 400px;"></video>
+                                        <canvas id="canvas" style="display: none; width: 100%; max-width: 400px;"></canvas>
+                                    </div>
+                                    
+                                    <button type="button" id="captureBtn" class="btn btn-outline-primary w-100 mt-3">
+                                        <i class="bi bi-camera-fill"></i> Capture Face
+                                    </button>
+                                    
+                                    <div class="mt-3 text-center">
+                                        <small class="text-muted">
+                                            <i class="bi bi-info-circle"></i> 
+                                            Make sure your face is clearly visible and well-lit
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center">
+                            {% if checkin_status and checkin_status.can_checkin %}
+                                <button type="submit" id="submitBtn" class="btn btn-primary btn-lg px-5 rounded-3 fw-semibold" disabled>
+                                    <i class="bi bi-check-circle me-2"></i>Verify & Check In
+                                </button>
+                            {% else %}
+                                <button type="button" class="btn btn-secondary btn-lg px-5 rounded-3 fw-semibold" disabled>
+                                    <i class="bi bi-x-circle me-2"></i>Check-in Not Available
+                                </button>
+                            {% endif %}
+                        </div>
+                        
+                        <!-- Back to Dashboard -->
+                        <div class="text-center mt-4">
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary rounded-3">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/camera.js') }}"></script>
+<script>
+    const camera = new CameraCapture('video', 'canvas', 'captureBtn', 'submitBtn');
+</script>
+{% endblock %}

@@ -1,0 +1,27 @@
+{
+    "production": {
+        "app_function": "app.app",
+        "aws_region": "ap-southeast-1",
+        "profile_name": "default",
+        "project_name": "fcj-checkin",
+        "runtime": "python3.9",
+        "s3_bucket": "fcj-checkin-zappa-deployments",
+        "memory_size": 1024,
+        "timeout_seconds": 30,
+        "environment_variables": {
+            "FLASK_ENV": "production"
+        },
+        "exclude": [
+            "*.pyc",
+            "__pycache__",
+            ".git",
+            ".env",
+            "*.md",
+            "settings.json",
+            "PROJECT_STRUCTURE.md",
+            "DEPLOYMENT.md"
+        ],
+        "keep_warm": false,
+        "slim_handler": true
+    }
+}

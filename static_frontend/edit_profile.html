@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile - FCJ Face Check-in</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+
+<style>
+/* Essential Navbar Styles */
+.navbar {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%) !important;
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 0.75rem 0;
+}
+
+.navbar-brand {
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.brand-logo {
+    height: 40px;
+    width: auto;
+    filter: brightness(1.1);
+}
+
+.brand-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+    background: linear-gradient(135deg, #ffffff 0%, #e3f2fd 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.brand-subtitle {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.7);
+    font-weight: 500;
+    margin: 0;
+    letter-spacing: 0.5px;
+}
+
+.navbar-nav .nav-link {
+    color: rgba(255,255,255,0.8) !important;
+    font-weight: 500;
+    padding: 0.5rem 1rem !important;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #ffffff !important;
+    background: rgba(255,255,255,0.1);
+    transform: translateY(-1px);
+}
+
+/* Essential Footer Styles */
+.footer-modern {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: #ffffff;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: 3rem;
+    padding: 2rem 0;
+}
+
+.footer-logo {
+    height: 32px;
+    width: auto;
+    filter: brightness(1.1);
+}
+
+.footer-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+}
+
+.footer-subtitle {
+    font-size: 0.8rem;
+    color: rgba(255,255,255,0.7);
+    margin: 0;
+}
+
+.footer-description {
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.8);
+    line-height: 1.5;
+    margin-top: 0.5rem;
+}
+
+.footer-heading {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #64b5f6;
+    margin-bottom: 1rem;
+}
+
+.service-badge {
+    background: rgba(100,181,246,0.2);
+    color: #64b5f6;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border: 1px solid rgba(100,181,246,0.3);
+    margin: 0.2rem;
+    display: inline-block;
+}
+
+.footer-link {
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    margin: 0 0.5rem;
+}
+
+.footer-link:hover {
+    color: #64b5f6;
+}
+
+.footer-copyright {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.8rem;
+}
+</style>
+</head>
+<body>
+    <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg navbar-dark sticky-top shadow-lg">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center" href="index.html">
+                <div class="brand-logo-container me-3">
+                    <img src="/static/images/fcj-logo.svg" alt="AWS FCJ Logo" class="brand-logo">
+                </div>
+                <div class="brand-text-container">
+                    <div class="brand-title">FCJ Check-in</div>
+                    <div class="brand-subtitle">AWS First Cloud Journey</div>
+                </div>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="login.html">
+                        <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                    </a>
+                    <a class="nav-link" href="register.html">
+                        <i class="bi bi-person-plus me-1"></i>Register
+                    </a>
+                    <a class="nav-link" href="dashboard.html">
+                        <i class="bi bi-grid-3x3-gap me-1"></i>Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        Edit Profile - FCJ Face Check-in
+
+<div class="min-vh-100 d-flex align-items-center bg-light py-5">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-5">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <div class="mb-3">
+                                <i class="bi bi-person-gear text-primary" style="font-size: 3.5rem;"></i>
+                            </div>
+                            <h2 class="fw-bold text-dark mb-2">Edit Profile</h2>
+                            <p class="text-muted">Update your account information</p>
+                        </div>
+
+                        <!-- Edit Form -->
+                        <form method="POST" class="needs-validation" novalidate enctype="multipart/form-data" action="https://go18cmoqsa.execute-api.ap-southeast-1.amazonaws.com/default/edit-profile">
+                            <div class="row">
+                                <!-- Left Column - User Info -->
+                                <div class="col-lg-6">
+                                    <div class="pe-lg-4">
+                                        <h5 class="mb-3 text-primary">
+                                            <i class="bi bi-person-circle me-2"></i>Personal Information
+                                        </h5>
+                                        
+                                        <div class="mb-4">
+                                            <label for="username" class="form-label fw-semibold">
+                                                <i class="bi bi-at me-2 text-muted"></i>Username
+                                            </label>
+                                            <input type="text" 
+                                                   class="form-control form-control-lg rounded-3" 
+                                                   id="username" 
+                                                   value=""
+                                                   readonly
+                                                   style="background-color: #f8f9fa;">
+                                            <small class="text-muted">Username cannot be changed</small>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label for="full_name" class="form-label fw-semibold">
+                                                <i class="bi bi-person me-2 text-primary"></i>Full Name
+                                            </label>
+                                            <input type="text" 
+                                                   class="form-control form-control-lg rounded-3" 
+                                                   id="full_name" 
+                                                   name="full_name" 
+                                                   value=""
+                                                   placeholder="Enter your full name"
+                                                   required>
+                                            <div class="invalid-feedback">
+                                                Please enter your full name.
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label for="email" class="form-label fw-semibold">
+                                                <i class="bi bi-envelope me-2 text-primary"></i>Email Address
+                                            </label>
+                                            <input type="email" 
+                                                   class="form-control form-control-lg rounded-3" 
+                                                   id="email" 
+                                                   name="email" 
+                                                   value=""
+                                                   placeholder="Enter your email address"
+                                                   <!-- if -->required<!-- endif -->>
+                                            <div class="invalid-feedback">
+                                                Please enter a valid email address.
+                                            </div>
+                                            <!-- if -->
+                                                <small class="text-warning">
+                                                    <i class="bi bi-exclamation-triangle"></i> 
+                                                    Email is required for secure login with OTP verification
+                                                </small>
+                                            <!-- endif -->
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label for="password" class="form-label fw-semibold">
+                                                <i class="bi bi-lock-fill me-2 text-primary"></i>New Password
+                                            </label>
+                                            <input type="password" 
+                                                   class="form-control form-control-lg rounded-3" 
+                                                   id="password" 
+                                                   name="password" 
+                                                   placeholder="Leave blank to keep current password">
+                                            <small class="text-muted">Leave blank if you don't want to change password</small>
+                                        </div>
+
+                                        <div class="mb-4">
+                                            <label for="confirm_password" class="form-label fw-semibold">
+                                                <i class="bi bi-lock-check me-2 text-primary"></i>Confirm Password
+                                            </label>
+                                            <input type="password" 
+                                                   class="form-control form-control-lg rounded-3" 
+                                                   id="confirm_password" 
+                                                   name="confirm_password" 
+                                                   placeholder="Confirm new password">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Right Column - Face Image -->
+                                <div class="col-lg-6">
+                                    <div class="ps-lg-4">
+                                        <h5 class="mb-3 text-success">
+                                            <i class="bi bi-camera me-2"></i>Update Face Image
+                                        </h5>
+                                        
+                                        <!-- Current Image -->
+                                        <div class="text-center mb-4">
+                                            <img src="" 
+                                                 alt="Current Profile" 
+                                                 class="rounded-circle shadow-sm" 
+                                                 style="width: 150px; height: 150px; object-fit: cover;"
+                                                 onerror="this.onerror=null; this.src="/static/default-avatar.svg'">
+                                            <p class="text-muted mt-2 mb-0">Current Image</p>
+                                        </div>
+                                        
+                                        <!-- Option Selection -->
+                                        <div class="mb-3">
+                                            <div class="btn-group w-100" role="group">
+                                                <input type="radio" class="btn-check" name="imageOption" id="uploadOption" value="upload" checked>
+                                                <label class="btn btn-outline-primary rounded-start-3" for="uploadOption">
+                                                    <i class="bi bi-upload me-2"></i>Upload New
+                                                </label>
+                                                
+                                                <input type="radio" class="btn-check" name="imageOption" id="cameraOption" value="camera">
+                                                <label class="btn btn-outline-success rounded-end-3" for="cameraOption">
+                                                    <i class="bi bi-camera me-2"></i>Use Camera
+                                                </label>
+                                            </div>
+                                        </div>
+                                        
+                                        <!-- Upload Section -->
+                                        <div id="uploadSection" class="mb-4">
+                                            <input type="file" 
+                                                   id="fileInput" 
+                                                   name="face_image_file"
+                                                   accept="image/jpeg,image/jpg,image/png" 
+                                                   class="form-control rounded-3">
+                                            <small class="text-muted">Optional: Upload new face image (JPG, PNG)</small>
+                                        </div>
+                                        
+                                        <!-- Camera Section -->
+                                        <div id="cameraSection" class="mb-4" style="display: none;">
+                                            <div class="card bg-light border-2 border-dashed rounded-4">
+                                                <div class="card-body text-center p-3">
+                                                    <div class="camera-container mb-3" style="min-height: 200px;">
+                                                        <video id="video" autoplay class="rounded-3" style="width: 100%; max-width: 250px; display: none;"></video>
+                                                        <canvas id="canvas" class="rounded-3" style="width: 100%; max-width: 250px; display: none;"></canvas>
+                                                        <div id="cameraPlaceholder" class="text-center py-4">
+                                                            <i class="bi bi-camera-fill text-muted" style="font-size: 2rem;"></i>
+                                                            <p class="text-muted mt-2 mb-0">Camera preview</p>
+                                                        </div>
+                                                    </div>
+                                                    <div class="d-grid gap-2">
+                                                        <button type="button" id="startCamera" class="btn btn-outline-success rounded-3">
+                                                            <i class="bi bi-camera-video me-2"></i>Start Camera
+                                                        </button>
+                                                        <button type="button" id="captureBtn" class="btn btn-success rounded-3" style="display: none;">
+                                                            <i class="bi bi-camera me-2"></i>Capture
+                                                        </button>
+                                                        <button type="button" id="retakeBtn" class="btn btn-warning rounded-3" style="display: none;">
+                                                            <i class="bi bi-arrow-clockwise me-2"></i>Retake
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Submit Buttons -->
+                            <div class="text-center mt-4">
+                                <button type="submit" class="btn btn-success btn-lg px-5 rounded-3 fw-semibold me-3">
+                                    <i class="bi bi-check-circle me-2"></i>Update Profile
+                                </button>
+                                <a href="profile.html" class="btn btn-outline-secondary btn-lg px-4 rounded-3">
+                                    <i class="bi bi-x-circle me-2"></i>Cancel
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Enhanced edit profile functionality
+class EditProfileManager {
+    constructor() {
+        this.video = document.getElementById('video');
+        this.canvas = document.getElementById('canvas');
+        this.startBtn = document.getElementById('startCamera');
+        this.captureBtn = document.getElementById('captureBtn');
+        this.retakeBtn = document.getElementById('retakeBtn');
+        this.cameraPlaceholder = document.getElementById('cameraPlaceholder');
+        this.uploadSection = document.getElementById('uploadSection');
+        this.cameraSection = document.getElementById('cameraSection');
+        this.stream = null;
+        
+        this.initializeEvents();
+    }
+    
+    initializeEvents() {
+        // Option toggle
+        document.querySelectorAll('input[name="imageOption"]').forEach(radio => {
+            radio.addEventListener('change', (e) => this.toggleImageOption(e.target.value));
+        });
+        
+        // Camera controls
+        this.startBtn.addEventListener('click', () => this.startCamera());
+        this.captureBtn.addEventListener('click', () => this.captureImage());
+        this.retakeBtn.addEventListener('click', () => this.retakeImage());
+        
+        // Password confirmation
+        document.getElementById('confirm_password').addEventListener('input', this.validatePasswords);
+        document.getElementById('password').addEventListener('input', this.validatePasswords);
+    }
+    
+    toggleImageOption(option) {
+        if (option === 'upload') {
+            this.uploadSection.style.display = 'block';
+            this.cameraSection.style.display = 'none';
+            this.stopCamera();
+        } else {
+            this.uploadSection.style.display = 'none';
+            this.cameraSection.style.display = 'block';
+        }
+    }
+    
+    validatePasswords() {
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
+        
+        if (password && confirmPassword && password !== confirmPassword) {
+            document.getElementById('confirm_password').setCustomValidity('Passwords do not match');
+        } else {
+            document.getElementById('confirm_password').setCustomValidity('');
+        }
+    }
+    
+    async startCamera() {
+        try {
+            this.stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            this.video.srcObject = this.stream;
+            
+            this.cameraPlaceholder.style.display = 'none';
+            this.video.style.display = 'block';
+            this.startBtn.style.display = 'none';
+            this.captureBtn.style.display = 'block';
+        } catch (error) {
+            alert('Camera access denied or not available');
+        }
+    }
+    
+    captureImage() {
+        const context = this.canvas.getContext('2d');
+        this.canvas.width = this.video.videoWidth;
+        this.canvas.height = this.video.videoHeight;
+        context.drawImage(this.video, 0, 0);
+        
+        this.video.style.display = 'none';
+        this.canvas.style.display = 'block';
+        this.captureBtn.style.display = 'none';
+        this.retakeBtn.style.display = 'block';
+        
+        // Store image data
+        const imageData = this.canvas.toDataURL('image/jpeg');
+        this.addHiddenInput('face_image_data', imageData);
+    }
+    
+    retakeImage() {
+        this.canvas.style.display = 'none';
+        this.video.style.display = 'block';
+        this.retakeBtn.style.display = 'none';
+        this.captureBtn.style.display = 'block';
+        
+        this.removeHiddenInput('face_image_data');
+    }
+    
+    stopCamera() {
+        if (this.stream) {
+            this.stream.getTracks().forEach(track => track.stop());
+            this.stream = null;
+        }
+        this.video.style.display = 'none';
+        this.canvas.style.display = 'none';
+        this.cameraPlaceholder.style.display = 'block';
+        this.startBtn.style.display = 'block';
+        this.captureBtn.style.display = 'none';
+        this.retakeBtn.style.display = 'none';
+    }
+    
+    addHiddenInput(name, value) {
+        this.removeHiddenInput(name);
+        const hiddenInput = document.createElement('input');
+        hiddenInput.type = 'hidden';
+        hiddenInput.name = name;
+        hiddenInput.value = value;
+        document.querySelector('form').appendChild(hiddenInput);
+    }
+    
+    removeHiddenInput(name) {
+        const existing = document.querySelector(`input[name="${name}"]`);
+        if (existing) existing.remove();
+    }
+}
+
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Initialize
+document.addEventListener('DOMContentLoaded', function() {
+    new EditProfileManager();
+});
+</script>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer-modern mt-auto">
+        <div class="container">
+            <div class="row align-items-center py-4">
+                <div class="col-lg-4 col-md-6 mb-3 mb-md-0">
+                    <div class="footer-brand">
+                        <div class="d-flex align-items-center mb-2">
+                            <img src="/static/images/fcj-logo.svg" alt="AWS FCJ Logo" class="footer-logo me-2">
+                            <div>
+                                <div class="footer-title">FCJ Check-in</div>
+                                <div class="footer-subtitle">Enterprise Attendance System</div>
+                            </div>
+                        </div>
+                        <p class="footer-description mb-0">
+                            Secure, AI-powered attendance management built on AWS cloud infrastructure.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-md-6 mb-3 mb-md-0">
+                    <div class="footer-section">
+                        <h6 class="footer-heading">
+                            <i class="bi bi-cloud-check me-2"></i>Powered by FCJ Trainee Tran Thien Duc 
+                        </h6>
+                        <div class="aws-services">
+                            <span class="service-badge"><i class="bi bi-eye"></i> Rekognition</span>
+                            <span class="service-badge"><i class="bi bi-database"></i> DynamoDB</span>
+                            <span class="service-badge"><i class="bi bi-cloud-upload"></i> S3</span>
+                            <span class="service-badge"><i class="bi bi-envelope"></i> SES</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-lg-4 col-12">
+                    <div class="footer-section text-lg-end">
+                        <div class="footer-links mb-2">
+                            <a href="#" class="footer-link">Privacy Policy</a>
+                            <a href="#" class="footer-link">Terms of Service</a>
+                            <a href="#" class="footer-link">Support</a>
+                        </div>
+                        <div class="footer-copyright">
+                            <small>© 2025 FCJ Trainees. Built with ❤️ on AWS.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/notifications.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+{
+    "morning_start": "08:30",
+    "morning_end": "10:00",
+    "evening_start": "16:30",
+    "evening_end": "18:00",
+    "similarity_threshold": 95.0,
+    "allow_late_checkin": true,
+    "prevent_duplicate_checkin": true
+}

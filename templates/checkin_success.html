@@ -1,0 +1,221 @@
+{% extends "base.html" %}
+
+{% block title %}Check-in Result - FCJ Face Check-in{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        {% if result.status == 'success' %}
+        <div class="card border-success fade-in-up" data-status="success">
+            <div class="card-header bg-success text-white text-center">
+                <h3><i class="bi bi-check-circle-fill"></i> Check-in Successful!</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <h5>{{ user.get('full_name', 'User') }}</h5>
+                        <img src="{{ user.get('image_url', url_for('static', filename='default-avatar.svg')) }}" 
+                             alt="{{ user.get('full_name', 'User') }}" 
+                             class="img-thumbnail mb-3" style="max-width: 250px;"
+                             onerror="this.onerror=null; this.src='/static/default-avatar.svg'">
+                        <p class="text-muted">Registered Face</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-success">
+                            <h6><i class="bi bi-graph-up"></i> Match Details</h6>
+                            <p><strong>Similarity Score:</strong> {{ "%.2f"|format(result.similarity) }}%</p>
+                            <p><strong>Status:</strong> <span class="badge bg-success">SUCCESS</span></p>
+                            <p><strong>Time:</strong> {{ result.timestamp }}</p>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <div class="spinner-border text-success" role="status">
+                                <span class="visually-hidden">Redirecting...</span>
+                            </div>
+                            <p class="mt-2">Redirecting to dashboard in <span id="countdown">5</span> seconds...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif result.status == 'failed' %}
+        <div class="card border-warning fade-in-up" data-status="failed">
+            <div class="card-header bg-warning text-dark text-center">
+                <h3><i class="bi bi-exclamation-triangle-fill"></i> Face Recognition Failed</h3>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 text-center">
+                        <h5>{{ user.get('full_name', 'User') }}</h5>
+                        <img src="{{ user.get('image_url', url_for('static', filename='default-avatar.svg')) }}" 
+                             alt="{{ user.get('full_name', 'User') }}" 
+                             class="img-thumbnail mb-3" style="max-width: 250px;"
+                             onerror="this.onerror=null; this.src='/static/default-avatar.svg'">
+                        <p class="text-muted">Registered Face</p>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="alert alert-warning">
+                            <h6><i class="bi bi-graph-down"></i> Recognition Details</h6>
+                            <p><strong>Similarity Score:</strong> {{ "%.1f"|format(result.similarity) }}%</p>
+                            <p><strong>Required:</strong> ≥{{ result.threshold|default(95) }}%</p>
+                            <p><strong>Status:</strong> <span class="badge bg-warning text-dark">RECOGNITION FAILED</span></p>
+                            <hr>
+                            <p class="mb-0"><strong>{{ result.message }}</strong></p>
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <h6><i class="bi bi-lightbulb"></i> Tips for Better Recognition:</h6>
+                            <ul class="mb-0">
+                                <li>Ensure good lighting on your face</li>
+                                <li>Look directly at the camera</li>
+                                <li>Remove any face coverings</li>
+                                <li>Keep your face centered in the frame</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('checkin') }}" class="btn btn-primary btn-lg">
+                                <i class="bi bi-arrow-clockwise me-2"></i>Try Again
+                            </a>
+                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif result.status == 'duplicate' %}
+        <div class="card border-info fade-in-up" data-status="duplicate">
+            <div class="card-header bg-info text-white text-center">
+                <h3><i class="bi bi-info-circle-fill"></i> Already Checked In</h3>
+            </div>
+            <div class="card-body">
+                <div class="text-center">
+                    <div class="alert alert-info">
+                        <h5><i class="bi bi-check-circle"></i> {{ result.message }}</h5>
+                        <p class="mb-0">You have already completed your check-in for this session today.</p>
+                    </div>
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-speedometer2 me-2"></i>Go to Dashboard
+                        </a>
+                        <a href="{{ url_for('history') }}" class="btn btn-outline-secondary">View History</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% elif result.status == 'blocked' %}
+        <div class="card border-secondary fade-in-up" data-status="blocked">
+            <div class="card-header bg-secondary text-white text-center">
+                <h3><i class="bi bi-clock-fill"></i> Check-in Not Available</h3>
+            </div>
+            <div class="card-body">
+                <div class="text-center">
+                    <div class="alert alert-secondary">
+                        <h5><i class="bi bi-exclamation-circle"></i> {{ result.message }}</h5>
+                        <p class="mb-0">Check-in is only available during designated time windows.</p>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <h6><i class="bi bi-clock"></i> Check-in Schedule:</h6>
+                        <p class="mb-1"><strong>Morning:</strong> 08:30 - 10:00</p>
+                        <p class="mb-0"><strong>Evening:</strong> 16:30 - 18:00</p>
+                    </div>
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-speedometer2 me-2"></i>Go to Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="card border-danger fade-in-up" data-status="error">
+            <div class="card-header bg-danger text-white text-center">
+                <h3><i class="bi bi-x-circle-fill"></i> Check-in Error</h3>
+            </div>
+            <div class="card-body">
+                <div class="text-center">
+                    <div class="alert alert-danger">
+                        <h5><i class="bi bi-exclamation-triangle"></i> {{ result.message }}</h5>
+                        <p class="mb-0">An error occurred during the check-in process.</p>
+                    </div>
+                    
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="{{ url_for('checkin') }}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Try Again
+                        </a>
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary">Back to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+</div>
+
+<script>
+// Show notification based on result
+ document.addEventListener('DOMContentLoaded', function () {
+    const result = JSON.parse('{{ result | tojson | safe }}');
+
+    if (result.status === 'success') {
+      let notificationType = 'success';
+      let icon = '✅';
+      
+      if (result.check_type === 'late') {
+        notificationType = 'warning';
+        icon = '⚠️';
+        notificationManager.show(`${icon} Late check-in completed at ${result.time}`, notificationType);
+      } else if (result.check_type === 'morning') {
+        notificationManager.show(`${icon} Morning check-in completed successfully!`, notificationType);
+      } else if (result.check_type === 'evening') {
+        notificationManager.show(`${icon} Evening check-out completed successfully!`, notificationType);
+      } else {
+        notificationManager.show(`${icon} ${result.message}`, notificationType);
+      }
+    } else if (result.status === 'failed') {
+      const similarity = result.similarity || 0;
+      notificationManager.show(`⚠️ Face recognition failed (${similarity.toFixed(1)}%). Please try again.`, 'warning');
+    } else if (result.status === 'duplicate') {
+      notificationManager.show(`🔁 ${result.message || 'Already checked in today'}`, 'info');
+    } else if (result.status === 'blocked') {
+      notificationManager.show(`🕐 ${result.message || 'Check-in not available'}`, 'warning');
+    } else {
+      notificationManager.show(`❌ ${result.message || 'Check-in error. Please try again.'}`, 'error');
+    }
+  });
+
+const isSuccess = "{{ 'true' if result.status == 'success' else 'false' }}" === 'true';
+if (isSuccess) {
+    let countdown = 3;
+    const countdownElement = document.getElementById('countdown');
+    const redirectUrl = "{{ url_for('dashboard') }}";
+    
+    // Update countdown display
+    if (countdownElement) {
+        countdownElement.textContent = countdown;
+    }
+    
+    const timer = setInterval(() => {
+        countdown--;
+        if (countdownElement) {
+            countdownElement.textContent = countdown;
+        }
+        
+        if (countdown <= 0) {
+            clearInterval(timer);
+            // Trigger calendar refresh if dashboard is open
+            if (window.opener && window.opener.refreshAfterCheckin) {
+                window.opener.refreshAfterCheckin();
+            }
+            // Add URL parameter to trigger dashboard refresh
+            window.location.href = redirectUrl + '?refresh=1';
+        }
+    }, 1000);
+}
+</script>
+{% endblock %}

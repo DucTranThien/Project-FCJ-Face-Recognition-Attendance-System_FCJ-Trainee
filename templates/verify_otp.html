@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Email - FCJ Face Check-in{% endblock %}
+
+{% block content %}
+<div class="min-vh-100 d-flex align-items-center bg-gradient-primary">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-5 col-md-7">
+                <div class="card shadow-lg border-0 rounded-4">
+                    <div class="card-body p-5">
+                        <!-- Header -->
+                        <div class="text-center mb-4">
+                            <div class="mb-3">
+                                <i class="bi bi-shield-check text-primary" style="font-size: 3.5rem;"></i>
+                            </div>
+                            <h2 class="fw-bold text-dark mb-2">Email Verification</h2>
+                            <p class="text-muted">Enter the 6-digit code sent to your email</p>
+                            {% if session.pending_login and session.pending_login.email %}
+                                <small class="text-primary">{{ session.pending_login.email }}</small>
+                            {% endif %}
+                        </div>
+
+                        <!-- OTP Form -->
+                        <form method="POST" class="needs-validation" novalidate>
+                            <div class="mb-4">
+                                <label for="otp" class="form-label fw-semibold text-center d-block">
+                                    <i class="bi bi-key me-2 text-primary"></i>Verification Code
+                                </label>
+                                <input type="text" 
+                                       class="form-control form-control-lg text-center rounded-3" 
+                                       id="otp" 
+                                       name="otp" 
+                                       placeholder="000000"
+                                       maxlength="6"
+                                       pattern="[0-9]{6}"
+                                       style="font-size: 1.5rem; letter-spacing: 0.5rem;"
+                                       required
+                                       autocomplete="one-time-code">
+                                <div class="invalid-feedback text-center">
+                                    Please enter a valid 6-digit code.
+                                </div>
+                            </div>
+
+                            <div class="d-grid mb-3">
+                                <button type="submit" class="btn btn-primary btn-lg rounded-3 fw-semibold">
+                                    <i class="bi bi-check-circle me-2"></i>Verify & Login
+                                </button>
+                            </div>
+                        </form>
+
+                        <!-- Resend Section -->
+                        <div class="text-center">
+                            <p class="text-muted mb-2">Didn't receive the code?</p>
+                            <button id="resendBtn" class="btn btn-outline-secondary btn-sm rounded-3" onclick="resendOTP()">
+                                <i class="bi bi-arrow-clockwise me-1"></i>Resend Code
+                            </button>
+                            <div id="resendTimer" class="text-muted small mt-2" style="display: none;">
+                                Please wait <span id="countdown">30</span> seconds
+                            </div>
+                        </div>
+
+                        <!-- Back to Login -->
+                        <div class="text-center mt-4">
+                            <a href="{{ url_for('login') }}" class="text-decoration-none">
+                                <i class="bi bi-arrow-left me-1"></i>Back to Login
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let resendCooldown = false;
+
+// Auto-focus and format OTP input
+document.getElementById('otp').addEventListener('input', function(e) {
+    // Only allow digits
+    this.value = this.value.replace(/[^0-9]/g, '');
+    
+    // Auto-submit when 6 digits entered
+    if (this.value.length === 6) {
+        this.form.submit();
+    }
+});
+
+// Resend OTP function
+async function resendOTP() {
+    if (resendCooldown) return;
+    
+    const resendBtn = document.getElementById('resendBtn');
+    const resendTimer = document.getElementById('resendTimer');
+    const countdown = document.getElementById('countdown');
+    
+    try {
+        const response = await fetch('/resend-otp', {
+            method: 'POST',
+            credentials: 'include'
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            notificationManager.show('New verification code sent!', 'success');
+            startCooldown();
+        } else {
+            notificationManager.show(data.error || 'Failed to resend code', 'error');
+            if (response.status === 429) {
+                startCooldown();
+            }
+        }
+    } catch (error) {
+        notificationManager.show('Network error. Please try again.', 'error');
+    }
+}
+
+// Cooldown timer
+function startCooldown() {
+    resendCooldown = true;
+    const resendBtn = document.getElementById('resendBtn');
+    const resendTimer = document.getElementById('resendTimer');
+    const countdown = document.getElementById('countdown');
+    
+    resendBtn.disabled = true;
+    resendBtn.classList.add('disabled');
+    resendTimer.style.display = 'block';
+    
+    let timeLeft = 30;
+    const timer = setInterval(() => {
+        timeLeft--;
+        countdown.textContent = timeLeft;
+        
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            resendCooldown = false;
+            resendBtn.disabled = false;
+            resendBtn.classList.remove('disabled');
+            resendTimer.style.display = 'none';
+        }
+    }, 1000);
+}
+
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+
+// Auto-focus on load
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('otp').focus();
+});
+</script>
+{% endblock %}
