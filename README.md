@@ -8,6 +8,7 @@
 
 ---
 📌 Project Description
+
 The FCJ Check-in System offers a complete, contactless attendance solution that leverages Amazon Rekognition for facial verification, DynamoDB for attendance tracking, and S3 + Lambda for seamless frontend-backend integration. Users authenticate via email OTP, register face data, and perform secure check-ins in real-time.
 
 ## 🚀 Live Demo
