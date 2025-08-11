@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Chuẩn bị môi trường nodejs và trình soạn thảo văn bản VScode on AWS System Manager</title>
+    <link>//localhost:1313/vi/2-prerequiste/2.1-installnode_npm/</link>
+    <description>Recent content in Chuẩn bị môi trường nodejs và trình soạn thảo văn bản VScode on AWS System Manager</description>
+    <generator>Hugo</generator>
+    <language>vi</language>
+    <atom:link href="//localhost:1313/vi/2-prerequiste/2.1-installnode_npm/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>
